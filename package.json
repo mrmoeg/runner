@@ -1,0 +1,23 @@
+{
+  "name": "runner",
+  "version": "1.0.0",
+  "description": "A simple Phaser JS game",
+  "main": "server.js",
+  "scripts": {
+    "server": "http-server ./ -o ./index.html -c-1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "phaser",
+    "js",
+    "runner",
+    "mamu",
+    "game"
+  ],
+  "author": "MAMU",
+  "license": "ISC",
+  "dependencies": {
+    "http-server" : ">=0.10.0",
+    "phaser" : ">=2.6.2"
+  }
+}
