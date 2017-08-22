@@ -1,12 +1,7 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(gamevars.width, gamevars.height, Phaser.AUTO, '');
 
-function preload() {
-  game.load.image('guy', 'assets/guy.png');
-}
+game.state.add('load', loadState);
+game.state.add('menu', menuState);
+game.state.add('game', gameState);
 
-function create() {
-  game.add.sprite(0, 0, 'guy');
-}
-
-function update() {
-}
+game.state.start('load');
