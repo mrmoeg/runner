@@ -38,4 +38,7 @@ Thumbs.db
 
 # Node #
 ######################
-**/node_modules
+**/node_modules/*
+!**/node_modules/phaser
+**/node_modules/phaser/*
+!**/node_modules/phaser/build
