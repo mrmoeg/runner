@@ -38,7 +38,7 @@ Player.prototype.update = function(){
     this.boost();
   }else{
     this.break();
-    this.charge();
+    // this.charge();
   }
 };
 
