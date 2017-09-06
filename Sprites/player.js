@@ -1,22 +1,17 @@
 function Player( ) {
+  this.deltaTime = 0;
   this.height    = 16;
   this.width     = 16;
-  this.speed     = {
-    x: 0,
-    y: 0,
-  };
-  this.topSpeed  = 10;
-  this.accel     = 1.04;
-  this.friction  = 0.97;
 
-  this.rotation  = 0;
-  this.rotationSpeed  = 0.07;
+  this.force     = 8;
+  this.drag      = 0.4;
 
-  this.keys = {
-    turnLeft:  Phaser.Keyboard.LEFT,
-    turnRight: Phaser.Keyboard.RIGHT,
-    accel: Phaser.Keyboard.UP,
-  };
+  this.air          = 100;
+  this.airCooldown  = 1.2;
+  this.canBlow      = true;
+  this.isCharging   = true;
+  this.chargeRate   = 5;
+  this.blowRate     = 2;
 }
 
 Player.prototype.init = function(x,y){
@@ -26,7 +21,8 @@ Player.prototype.init = function(x,y){
   this.sprite.anchor.setTo(0.5,0.5);
 
   game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
-
+  this.sprite.body.collideWorldBounds = true;
+  this.sprite.body.worldBounce = {x:1,y:1};
 };
 
 Player.prototype.preload = function(){
@@ -35,41 +31,47 @@ Player.prototype.preload = function(){
 
 
 Player.prototype.update = function(){
+  this.deltaTime = game.time.elapsed/1000;
+  this.canBlow = this.air > this.blowRate;
 
-  // Rotate
-  this.sprite.body.velocity.x = this.sprite.body.velocity.x * this.friction;
-  this.sprite.body.velocity.y = this.sprite.body.velocity.y * this.friction;
-  if( game.input.keyboard.isDown(this.keys.turnLeft) || game.input.keyboard.isDown(this.keys.turnRight) ){
-    if(game.input.keyboard.isDown(this.keys.turnLeft)){
-      this.rotate('left');
-    }else{
-      this.rotate('right');
-    }
-  }
-  if(game.input.keyboard.isDown(this.keys.turnLeft)){
+  if( this.canBlow && game.input.activePointer.isDown ){
     this.boost();
   }else{
     this.break();
+    this.charge();
   }
-console.log(this.sprite.body.angularVelocity);
-  this.point.x += this.speed.x;
-  this.point.y += this.speed.y;
-
-};
-
-Player.prototype.rotate = function( dir ){
-  // this.rotation += this.rotationSpeed * dir;
-  this.sprite.body.angularVelocity = (dir === 'right')?200:-200;
 };
 
 Player.prototype.boost = function( ){
-  game.physics.arcade.velocityFromAngle(this.sprite.angle, 300, this.sprite.body.velocity);
+  var angle = Math.atan2(this.sprite.body.position.y - game.input.y, this.sprite.body.position.x - game.input.x);
+  this.sprite.body.velocity.y += Math.sin(angle) * this.force;
+  this.sprite.body.velocity.x += Math.cos(angle) * this.force;
+
+  this.air -= this.blowRate * this.deltaTime;
 };
 
 Player.prototype.break = function( ){
-  this.sprite.body.angularVelocity = this.sprite.body.angularVelocity * this.friction;
+  this.sprite.body.drag.x = Math.abs( this.sprite.body.velocity.x ) * this.drag;
+  this.sprite.body.drag.y = Math.abs( this.sprite.body.velocity.y ) * this.drag;
 };
 
 Player.prototype.render = function(){
-  game.debug.geom(this.point, 'rgb(0,255,0)');
+  // game.debug.geom(this.point, 'rgb(0,255,0)');
+  var debugstr = "Air: "+this.air;
+  game.debug.text(debugstr, 10, 12, 'rgb(255,0,255)');
+
+  debugstr = "canBlow: "+this.canBlow;
+  game.debug.text(debugstr, 10, 24, 'rgb(255,0,255)');
+
+  debugstr = "isCharging: "+this.isCharging;
+  game.debug.text(debugstr, 10, 36, 'rgb(255,0,255)');
+
+  debugstr = "airCooldown: "+this.airCooldown;
+  game.debug.text(debugstr, 10, 48, 'rgb(255,0,255)');
+
+  debugstr = "chargeRate: "+this.chargeRate;
+  game.debug.text(debugstr, 10, 60, 'rgb(255,0,255)');
+
+  debugstr = "blowRate: "+this.blowRate;
+  game.debug.text(debugstr, 10, 72, 'rgb(255,0,255)');
 };
