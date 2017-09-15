@@ -1,6 +1,6 @@
 var gamevars = {
-  width: window.innerWidth,
-  height: window.innerWidth / 16 * 9,
+  width: 800,
+  height: 450,
   colors: {
     text:             "#FFFFFF",
     splashBackground: "#BB33BB",

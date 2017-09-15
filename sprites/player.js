@@ -1,7 +1,7 @@
 function Player( ) {
   this.deltaTime = 0;
-  this.height    = 16;
-  this.width     = 16;
+  this.height    = 32;
+  this.width     = 32;
 
   this.force     = 8;
   this.drag      = 0.4;
