@@ -7,11 +7,13 @@ function Player( ) {
   this.drag      = 0.4;
 
   this.air          = 100;
+  this.airMax          = 100;
   this.airCooldown  = 1.2;
   this.canBlow      = true;
-  this.isCharging   = true;
-  this.chargeRate   = 5;
-  this.blowRate     = 2;
+  this.isCharging   = false;
+  this.chargeRate   = 20;
+  this.blowRate     = 60;
+  this.cooldownTimer = false;
 }
 
 Player.prototype.init = function(x,y){
@@ -32,17 +34,18 @@ Player.prototype.preload = function(){
 
 Player.prototype.update = function(){
   this.deltaTime = game.time.elapsed/1000;
-  this.canBlow = this.air > this.blowRate;
+  this.canBlow = this.air > 0;
 
   if( this.canBlow && game.input.activePointer.isDown ){
     this.boost();
   }else{
     this.break();
-    // this.charge();
+    this.charge();
   }
 };
 
 Player.prototype.boost = function( ){
+  this.isCharging = false;
   var angle = Math.atan2(this.sprite.body.position.y - game.input.y, this.sprite.body.position.x - game.input.x);
   this.sprite.body.velocity.y += Math.sin(angle) * this.force;
   this.sprite.body.velocity.x += Math.cos(angle) * this.force;
@@ -53,6 +56,19 @@ Player.prototype.boost = function( ){
 Player.prototype.break = function( ){
   this.sprite.body.drag.x = Math.abs( this.sprite.body.velocity.x ) * this.drag;
   this.sprite.body.drag.y = Math.abs( this.sprite.body.velocity.y ) * this.drag;
+  if( !this.cooldownTimer && this.air < this.airMax && !this.isCharging ){
+    this.cooldownTimer = game.time.events.add(Phaser.Timer.SECOND * this.airCooldown, this.startCharging, this);
+  }
+};
+
+Player.prototype.startCharging = function(){
+  this.cooldownTimer = false;
+  this.isCharging = true;
+};
+Player.prototype.charge = function(){
+  if(this.isCharging && this.air < this.airMax){
+    this.air += this.chargeRate * this.deltaTime;
+  }
 };
 
 Player.prototype.render = function(){
