@@ -1,6 +1,6 @@
 var gamevars = {
-  width: 800,
-  height: 450,
+  gridsize: 32,
+  grid: [25,14],
   colors: {
     text:             "#FFFFFF",
     splashBackground: "#BB33BB",
@@ -11,6 +11,8 @@ var gamevars = {
     default: "24px Arial",
   }
 };
+gamevars.width  = gamevars.grid[0]*gamevars.gridsize;
+gamevars.height = gamevars.grid[1]*gamevars.gridsize;
 
 function rotateVector2(v, angle, useRadians){
   var sin = Math.sin( Math.radians(angle) );

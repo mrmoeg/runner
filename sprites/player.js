@@ -67,14 +67,18 @@ Player.prototype.update = function(){
 }; // update()
 
 Player.prototype.boost = function( ){
-  this.isCharging = false;
-  var angle = Math.atan2(this.sprite.body.position.y - game.input.y, this.sprite.body.position.x - game.input.x);
-  var angleX = Math.sin(angle);
-  var angleY = Math.cos(angle);
-  this.sprite.body.velocity.y += angleX * this.force;
-  this.sprite.body.velocity.x += angleY * this.force;
+  if(this.air > 0){
+    this.isCharging = false;
+    var angle = Math.atan2(this.sprite.body.position.y - game.input.y, this.sprite.body.position.x - game.input.x);
+    var angleX = Math.sin(angle);
+    var angleY = Math.cos(angle);
+    this.sprite.body.velocity.y += angleX * this.force;
+    this.sprite.body.velocity.x += angleY * this.force;
 
-  this.air -= this.blowRate * this.deltaTime;
+    this.air -= this.blowRate * this.deltaTime;
+  }else{
+    this.air = 0;
+  }
   // this.emitBlow(angleX, angleY);
 }; // boost()
 
@@ -83,6 +87,12 @@ Player.prototype.break = function( ){
   this.sprite.body.drag.y = Math.abs( this.sprite.body.velocity.y ) * this.drag;
   if( !this.cooldownTimer && this.air < this.airMax && !this.isCharging ){
     this.cooldownTimer = game.time.events.add(Phaser.Timer.SECOND * this.airCooldown, this.startCharging, this);
+  }
+  // Make sure the sprite stops moving completely when speed is minimal.
+  // If speedvector is less than 1. Stop. Using simple pythagoras
+  if( ( Math.pow( Math.abs( this.sprite.body.velocity.x ),2 ) + Math.pow( Math.abs( this.sprite.body.velocity.y ),2 ) ) < 1 ){
+    this.sprite.body.velocity.x = 0;
+    this.sprite.body.velocity.y = 0;
   }
 }; // break()
 
@@ -93,6 +103,8 @@ Player.prototype.startCharging = function(){
 Player.prototype.charge = function(){
   if(this.isCharging && this.air < this.airMax){
     this.air += this.chargeRate * this.deltaTime;
+  }else if ( this.air > this.airMax ){
+    this.air = this.airMax;
   }
 }; // charge()
 //           :::     ::::::::::: :::::::::    :::   :::   :::::::::: ::::::::::: :::::::::: :::::::::
@@ -149,21 +161,21 @@ Player.prototype.emitBlow = function(angleX, angleY){
 Player.prototype.render = function(){
   this.drawAirMeter();
 
-  // var debugstr = "Air: "+this.air;
-  // game.debug.text(debugstr, 10, 12, 'rgb(255,0,255)');
-  //
-  // debugstr = "canBlow: "+this.canBlow;
-  // game.debug.text(debugstr, 10, 24, 'rgb(255,0,255)');
-  //
-  // debugstr = "isCharging: "+this.isCharging;
-  // game.debug.text(debugstr, 10, 36, 'rgb(255,0,255)');
-  //
-  // debugstr = "airCooldown: "+this.airCooldown;
-  // game.debug.text(debugstr, 10, 48, 'rgb(255,0,255)');
-  //
-  // debugstr = "chargeRate: "+this.chargeRate;
-  // game.debug.text(debugstr, 10, 60, 'rgb(255,0,255)');
-  //
-  // debugstr = "blowRate: "+this.blowRate;
-  // game.debug.text(debugstr, 10, 72, 'rgb(255,0,255)');
+  var debugstr = "Air: "+this.air;
+  game.debug.text(debugstr, 10, 12, 'rgb(255,0,255)');
+
+  debugstr = "canBlow: "+this.canBlow;
+  game.debug.text(debugstr, 10, 24, 'rgb(255,0,255)');
+
+  debugstr = "isCharging: "+this.isCharging;
+  game.debug.text(debugstr, 10, 36, 'rgb(255,0,255)');
+
+  debugstr = "airCooldown: "+this.airCooldown;
+  game.debug.text(debugstr, 10, 48, 'rgb(255,0,255)');
+
+  debugstr = "chargeRate: "+this.chargeRate;
+  game.debug.text(debugstr, 10, 60, 'rgb(255,0,255)');
+
+  debugstr = "blowRate: "+this.blowRate;
+  game.debug.text(debugstr, 10, 72, 'rgb(255,0,255)');
 }; // render()
