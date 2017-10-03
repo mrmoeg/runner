@@ -44,7 +44,7 @@ Player.prototype.init = function(x,y){
 
 Player.prototype.preload = function(){
   game.load.image('player_img', 'assets/player.png');
-  game.load.image('blowParticle', 'assets/particles/blow.png');
+  // game.load.image('blowParticle', 'assets/particles/blow.png');
 };
 
 //      :::    ::: :::::::::  :::::::::      ::: ::::::::::: ::::::::::
@@ -129,25 +129,15 @@ Player.prototype.drawAirMeter = function(){
 //   +#+    +#+ +#+       +#+    +#+ +#+ +#+#+ +#+ +#+        +#+       +#+     +#+         +#+         +#+     +#+        +#+    +#+
 //  #+#    #+# #+#       #+#    #+#  #+#+# #+#+#  #+#        #+#       #+#     #+#         #+#         #+#     #+#        #+#    #+#
 // #########  ########## ########    ###   ###   ########## ###       ### ###########     ###         ###     ########## ###    ###
-// Player.prototype.createBlowEmitter = function(){
-//   this.blowEmitter = game.add.emitter(this.sprite.body.x, this.sprite.body.y, this.height, this.width);
-//   this.blowEmitter.particleSpeedMin = 0.01;
-//   this.blowEmitter.particleSpeedMax = 0.3;
-//   this.blowEmitter.makeParticles( "blowParticle" );
-//   return this.blowEmitter;
-// };
-// Player.prototype.emitBlow = function(angleX, angleY){
-//   this.blowEmitter = ( typeof this.blowEmitter === "undefined")?this.createBlowEmitter():this.blowEmitter;
-//   this.blowEmitter.centerX = this.sprite.body.x + this.width/2;
-//   this.blowEmitter.centerY = this.sprite.body.y + this.height/2;
-//   this.blowEmitter.setXSpeed(this.blowEmitter.particleSpeedMin * angleX, this.blowEmitter.particleSpeedMax * angleX);
-//   this.blowEmitter.setYSpeed(this.blowEmitter.particleSpeedMin * angleY, this.blowEmitter.particleSpeedMax * angleY);
-//   // for (var i = 0; i < Math.ceil(Math.random() * 5); i++) {
-//   //   this.blowEmitter.emitParticle();
-//   // }
-//   this.blowEmitter.emitParticle();
-//   // this.blowEmitter.explode(200,10);
-// };
+Player.prototype.createBlowEmitter = function(){
+  this.blowEmitter = game.add.emitter(this.sprite.body.x, this.sprite.body.y, this.height, this.width);
+  return this.blowEmitter;
+};
+Player.prototype.emitBlow = function(angleX, angleY){
+  this.blowEmitter = ( typeof this.blowEmitter === "undefined")?this.createBlowEmitter():this.blowEmitter;
+  this.blowEmitter.centerX = this.sprite.body.x + this.width/2;
+  this.blowEmitter.centerY = this.sprite.body.y + this.height/2;
+};
 
 //       :::::::::  :::::::::: ::::    ::: :::::::::  :::::::::: :::::::::
 //      :+:    :+: :+:        :+:+:   :+: :+:    :+: :+:        :+:    :+:
